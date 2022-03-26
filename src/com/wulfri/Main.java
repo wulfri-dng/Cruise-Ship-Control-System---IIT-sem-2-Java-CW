@@ -61,7 +61,12 @@ public class Main {
                 } else if(cabinNo >= 0 && cabinNo < ship.length) {
                     System.out.println("Enter the name of the passenger for cabin " + cabinNo + ": ");
                     String passengerName = scanner.next();
-                    ship[cabinNo] = passengerName;
+                    try {
+                        Integer.parseInt(passengerName);
+                        System.out.println("Error!!! You cannot enter a number as a passenger name.");
+                    } catch (NumberFormatException ex) {
+                        ship[cabinNo] = passengerName;
+                    }
                 } else {
                     System.out.println("Invalid input!!! Enter a number between 0 - " + (ship.length - 1));
                 }
@@ -167,48 +172,55 @@ public class Main {
             }
         }
 
-        String prevPassenger = null;
-        String curePassenger = null;
         for (int i = 0; i < passengerList.length; i++) {
             if(passengerList[i] != null) {
-                if(i == 0) {
-                    prevPassenger = passengerList[i];
-                } else if (i == 1) {
-                    curePassenger = passengerList[i];
-                } else {
-                    prevPassenger = curePassenger;
-                    curePassenger = passengerList[i];
-                }
-                if(prevPassenger != null && curePassenger != null) {
-                    System.out.println(prevPassenger + "   " + curePassenger);
-                    if(prevPassenger.charAt(0) > curePassenger.charAt(0)) {
-                        System.out.println(prevPassenger + " > " + curePassenger);
-                        String temp = prevPassenger;
-                        prevPassenger = curePassenger;
-                        curePassenger = temp;
-                        System.out.println(prevPassenger + "   " + curePassenger);
-                        passengerList[i-1] = prevPassenger;
-                        passengerList[i] = curePassenger;
-                        int currentIndex = i-1;
-                        while(currentIndex > 0) {
-                            if(passengerList[currentIndex-1].charAt(0) > passengerList[currentIndex].charAt(0)) {
-                                System.out.println(passengerList[currentIndex-1] + " > " + passengerList[currentIndex]);
-                                String temp2 = passengerList[currentIndex-1];
-                                passengerList[currentIndex-1] = passengerList[currentIndex];
-                                passengerList[currentIndex] = temp2;
-                                currentIndex--;
-                            } else {
-                                break;
+                if(i > 1) {
+                    int currentIndex = i;
+                    while(currentIndex > 0) {
+                        char previousPassenger = Character.toLowerCase(passengerList[currentIndex-1].charAt(0));
+                        char currentPassenger = Character.toLowerCase(passengerList[currentIndex].charAt(0));
+                        if(previousPassenger > currentPassenger) {
+                            String temp = passengerList[currentIndex-1];
+                            passengerList[currentIndex-1] = passengerList[currentIndex];
+                            passengerList[currentIndex] = temp;
+                            currentIndex--;
+                        } else if(previousPassenger == currentPassenger) {
+                            int sortIndex = 1;
+                            while (true) {
+                                char innerSortPrevPassenger = Character.toLowerCase(passengerList[currentIndex-1].charAt(sortIndex));
+                                char innerSortCurePassenger = Character.toLowerCase(passengerList[currentIndex].charAt(sortIndex));
+                                try {
+                                    if(innerSortPrevPassenger > innerSortCurePassenger) {
+                                        String temp = passengerList[currentIndex-1];
+                                        passengerList[currentIndex-1] = passengerList[currentIndex];
+                                        passengerList[currentIndex] = temp;
+                                        currentIndex--;
+                                        break;
+                                    } else if(innerSortPrevPassenger == innerSortCurePassenger) {
+                                        sortIndex++;
+                                    } else {
+                                        currentIndex--;
+                                        break;
+                                    }
+                                } catch (StringIndexOutOfBoundsException ex) {
+                                    currentIndex--;
+                                    break;
+                                }
                             }
+                        } else {
+                            break;
                         }
                     }
                 }
             }
         }
-        for (String s : passengerList) {
-            if (s != null) {
-                System.out.println(s);
+        System.out.println("=====================================================");
+        for (int i = 0; i < passengerList.length; i++) {
+            if (passengerList[i] != null) {
+                System.out.println(i + ") " + passengerList[i]);
             }
         }
+        System.out.println("-------------- END OF PASSENGER SORT ----------------");
+        System.out.println();
     }
 }
