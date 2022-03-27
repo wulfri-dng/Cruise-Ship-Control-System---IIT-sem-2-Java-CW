@@ -1,17 +1,31 @@
 package com.wulfri;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        String cabinName;
         int cabinCount = 12;
         String[] ship = new String[cabinCount];
-        initialise(ship);
 
+        initialise(ship);
+        mainMenu(ship);
+    }
+
+    public static void initialise(String[] ship) {
+        int cabinNo = 0;
+        while(cabinNo < ship.length) {
+            ship[cabinNo] = "e";
+            cabinNo++;
+        }
+    }
+
+    public static void mainMenu(String[] ship) {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("=======================================================");
         System.out.println("||| Welcome to Cruise Ship passenger control center |||");
         while (true) {
@@ -34,19 +48,11 @@ public class Main {
                 case "E" -> displayEmptyCabins(ship);
                 case "D" -> deletePassenger(ship);
                 case "F" -> findCabinByPassengerName(ship);
-                case "S" -> viewAllCabins(ship);
-                case "L" -> viewAllCabins(ship);
+                case "S" -> storeShipData(ship);
+                case "L" -> loadShipData(ship);
                 case "O" -> sortPassengerAlphabetically(ship);
                 default -> System.out.println("Invalid input!!! Check the entered number and try again.");
             }
-        }
-    }
-
-    public static void initialise(String[] ship) {
-        int cabinNo = 0;
-        while(cabinNo < ship.length) {
-            ship[cabinNo] = "e";
-            cabinNo++;
         }
     }
 
@@ -58,7 +64,7 @@ public class Main {
                 int cabinNo = scanner.nextInt();
                 if(cabinNo == ship.length) {
                     break;
-                } else if(cabinNo >= 0 && cabinNo < ship.length) {
+                } else if(cabinNo >= 0 && cabinNo < ship.length && ship[cabinNo].equals("e")) {
                     System.out.println("Enter the name of the passenger for cabin " + cabinNo + ": ");
                     String passengerName = scanner.next();
                     try {
@@ -67,7 +73,10 @@ public class Main {
                     } catch (NumberFormatException ex) {
                         ship[cabinNo] = passengerName;
                     }
-                } else {
+                } else if(!ship[cabinNo].equals("e")) {
+                    System.out.println("Cabin " + cabinNo + " is already booked. Try another cabin.");
+                }
+                else {
                     System.out.println("Invalid input!!! Enter a number between 0 - " + (ship.length - 1));
                 }
             } catch (InputMismatchException ex) {
@@ -222,5 +231,55 @@ public class Main {
         }
         System.out.println("-------------- END OF PASSENGER SORT ----------------");
         System.out.println();
+    }
+
+    public static void storeShipData(String[] ship) {
+        try {
+            FileWriter myWriter = new FileWriter("shipData.txt");
+            for (int i = 0; i < ship.length; i++) {
+                myWriter.write("Cabin " + i + " : ");
+                if(!ship[i].equals("e")) {
+                    myWriter.write(ship[i]);
+                } else {
+                    myWriter.write("EMPTY CABIN");
+                }
+                myWriter.write(System.lineSeparator());
+            }
+            myWriter.close();
+            System.out.println("Ship data saved successfully!");
+        } catch (IOException ex ) {
+            System.out.println("Error!!! IOException " + ex );
+        }
+    }
+
+    public static void loadShipData(String[] ship) {
+        try {
+            File inputFile = new File("shipData.txt");
+            Scanner readFile = new Scanner(inputFile);
+            String fileLine;
+            String passengerName = "e";
+            while (readFile.hasNext()) {
+                fileLine = readFile.nextLine();
+                int cabinNoInt;
+                try {
+                    String cabinNoString = fileLine.substring(6, 8);
+                    cabinNoInt = Integer.parseInt(cabinNoString);
+                    passengerName = fileLine.substring(11);
+                } catch (NumberFormatException ex) {
+                    String cabinNoString = fileLine.substring(6, 7);
+                    passengerName = fileLine.substring(10);
+                    cabinNoInt = Integer.parseInt(cabinNoString);
+                }
+                if(passengerName.equals("EMPTY CABIN")) {
+                    ship[cabinNoInt] = "e";
+                } else {
+                    ship[cabinNoInt] = passengerName;
+
+                }
+            }
+            System.out.println("Ship data loaded successfully!");
+        } catch (IOException ex) {
+            System.out.println("Error!!! IOException " + ex );
+        }
     }
 }
