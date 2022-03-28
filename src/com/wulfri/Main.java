@@ -253,33 +253,77 @@ public class Main {
     }
 
     public static void loadShipData(String[] ship) {
-        try {
-            File inputFile = new File("shipData.txt");
-            Scanner readFile = new Scanner(inputFile);
-            String fileLine;
-            String passengerName = "e";
-            while (readFile.hasNext()) {
-                fileLine = readFile.nextLine();
-                int cabinNoInt;
+        Scanner scanner = new Scanner(System.in);
+        String filePath = "shipData.txt";
+        if(previewStoredData(filePath)) {
+            while (true) {
                 try {
-                    String cabinNoString = fileLine.substring(6, 8);
-                    cabinNoInt = Integer.parseInt(cabinNoString);
-                    passengerName = fileLine.substring(11);
-                } catch (NumberFormatException ex) {
-                    String cabinNoString = fileLine.substring(6, 7);
-                    passengerName = fileLine.substring(10);
-                    cabinNoInt = Integer.parseInt(cabinNoString);
-                }
-                if(passengerName.equals("EMPTY CABIN")) {
-                    ship[cabinNoInt] = "e";
-                } else {
-                    ship[cabinNoInt] = passengerName;
+                    System.out.println("1: Enter loaded data into the cruise ship and update the database");
+                    System.out.println("2: Exit to main menu");
+                    int userInput = scanner.nextInt();
+                    if(userInput == 1) {
+                        try {
+                            File inputFile = new File(filePath);
+                            Scanner readFile = new Scanner(inputFile);
+                            String fileLine;
+                            String passengerName = "e";
 
+                            while (readFile.hasNext()) {
+                                fileLine = readFile.nextLine();
+                                int cabinNoInt;
+                                try {
+                                    String cabinNoString = fileLine.substring(6, 8);
+                                    cabinNoInt = Integer.parseInt(cabinNoString);
+                                    passengerName = fileLine.substring(11);
+                                } catch (NumberFormatException ex) {
+                                    String cabinNoString = fileLine.substring(6, 7);
+                                    passengerName = fileLine.substring(10);
+                                    cabinNoInt = Integer.parseInt(cabinNoString);
+                                }
+                                if(passengerName.equals("EMPTY CABIN")) {
+                                    ship[cabinNoInt] = "e";
+                                } else {
+                                    ship[cabinNoInt] = passengerName;
+
+                                }
+                            }
+                            System.out.println("Ship data loaded successfully!");
+                        } catch (IOException ex) {
+                            System.out.println("Error!!! IOException " + ex );
+                        }
+                        break;
+                    } else if (userInput == 2) {
+                        System.out.println("Exiting load data...");
+                        break;
+                    } else {
+                        System.out.println("Invalid input!!!");
+                    }
+                } catch (InputMismatchException ex) {
+                    System.out.println("Invalid input!!! ");
+                    System.out.println("Exiting load data...");
+                    break;
                 }
             }
-            System.out.println("Ship data loaded successfully!");
+        } else {
+            System.out.println("Empty file detected. Entered file path : " + filePath);
+            System.out.println("Exiting load data...");
+        }
+    }
+
+    public static boolean previewStoredData(String filePath) {
+        boolean canRead = false;
+        try {
+            File inputFile = new File(filePath);
+            Scanner readFile = new Scanner(inputFile);
+            System.out.println("Reading " + filePath);
+            while (readFile.hasNext()) {
+                canRead = true;
+                System.out.println(readFile.nextLine());
+            }
+            System.out.println("----------------------------------------------");
         } catch (IOException ex) {
             System.out.println("Error!!! IOException " + ex );
         }
+        return canRead;
     }
 }

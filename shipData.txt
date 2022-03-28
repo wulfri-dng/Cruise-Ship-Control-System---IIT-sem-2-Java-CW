@@ -4,7 +4,7 @@ Cabin 2 : EMPTY CABIN
 Cabin 3 : EMPTY CABIN
 Cabin 4 : EMPTY CABIN
 Cabin 5 : Navod\
-Cabin 6 : EMPTY CABIN
+Cabin 6 : unkown
 Cabin 7 : Gamage
 Cabin 8 : HGasdas
 Cabin 9 : sdfsdasd
