@@ -9,11 +9,12 @@ import java.util.Locale;
 import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
+        boolean systemOn = true;
         int cabinCount = 12;
         String[] ship = new String[cabinCount];
 
         initialise(ship);
-        mainMenu(ship);
+        mainMenu(ship, systemOn);
     }
 
     public static void initialise(String[] ship) {
@@ -24,11 +25,11 @@ public class Main {
         }
     }
 
-    public static void mainMenu(String[] ship) {
+    public static void mainMenu(String[] ship, boolean systemOn) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("=======================================================");
         System.out.println("||| Welcome to Cruise Ship passenger control center |||");
-        while (true) {
+        while (systemOn) {
             System.out.println("=======================================================");
             System.out.println("A: Add a customer to a cabin");
             System.out.println("V: View all cabins");
@@ -38,6 +39,7 @@ public class Main {
             System.out.println("S: Store program data into file");
             System.out.println("L: Load program data from file");
             System.out.println("O: View passengers Ordered alphabetically by name");
+            System.out.println("Exit: Shut down the system and exit application");
             System.out.println("-----------------------------------------------------");
             System.out.print("Select an option above to continue: ");
             String userInput = scanner.next().toUpperCase(Locale.ROOT);
@@ -51,6 +53,7 @@ public class Main {
                 case "S" -> storeShipData(ship);
                 case "L" -> loadShipData(ship);
                 case "O" -> sortPassengerAlphabetically(ship);
+                case "EXIT" -> systemOn = shutDown();
                 default -> System.out.println("Invalid input!!! Check the entered number and try again.");
             }
         }
@@ -325,5 +328,23 @@ public class Main {
             System.out.println("Error!!! IOException " + ex );
         }
         return canRead;
+    }
+
+    private static boolean shutDown() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Do you want to shut down the system?\n(This step cannot be reversible. Save your data before shutting down the system)");
+        System.out.println("1: Confirm and shut down\n2: Abort. Exit to main menu");
+        try {
+            int userInput = scanner.nextInt();
+            if(userInput == 1) {
+                System.out.println("Shutting down the system...");
+                return false;
+            } else if (!(userInput == 2)) {
+                System.out.println("Invalid input!!! Try again.");
+            }
+        } catch (InputMismatchException ex) {
+            System.out.println("Invalid data type input!!! Try again.");
+        }
+        return true;
     }
 }
