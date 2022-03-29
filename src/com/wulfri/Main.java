@@ -75,6 +75,7 @@ public class Main {
                         System.out.println("Error!!! You cannot enter a number as a passenger name.");
                     } catch (NumberFormatException ex) {
                         ship[cabinNo] = passengerName;
+                        System.out.println("Passenger " + passengerName + " added to the cabin " + cabinNo);
                     }
                 } else if(!ship[cabinNo].equals("e")) {
                     System.out.println("Cabin " + cabinNo + " is already booked. Try another cabin.");
@@ -174,68 +175,6 @@ public class Main {
         System.out.println("-------------- END OF SEARCH PASSENGER --------------");
     }
 
-    public static void sortPassengerAlphabetically(String[] ship) {
-        String[] passengerList = new String[ship.length];
-        int listPosition = 0;
-        for(String passenger : ship) {
-            if(!passenger.equals("e")) {
-                passengerList[listPosition] = passenger;
-                listPosition++;
-            }
-        }
-
-        for (int i = 0; i < passengerList.length; i++) {
-            if(passengerList[i] != null) {
-                if(i > 1) {
-                    int currentIndex = i;
-                    while(currentIndex > 0) {
-                        char previousPassenger = Character.toLowerCase(passengerList[currentIndex-1].charAt(0));
-                        char currentPassenger = Character.toLowerCase(passengerList[currentIndex].charAt(0));
-                        if(previousPassenger > currentPassenger) {
-                            String temp = passengerList[currentIndex-1];
-                            passengerList[currentIndex-1] = passengerList[currentIndex];
-                            passengerList[currentIndex] = temp;
-                            currentIndex--;
-                        } else if(previousPassenger == currentPassenger) {
-                            int sortIndex = 1;
-                            while (true) {
-                                char innerSortPrevPassenger = Character.toLowerCase(passengerList[currentIndex-1].charAt(sortIndex));
-                                char innerSortCurePassenger = Character.toLowerCase(passengerList[currentIndex].charAt(sortIndex));
-                                try {
-                                    if(innerSortPrevPassenger > innerSortCurePassenger) {
-                                        String temp = passengerList[currentIndex-1];
-                                        passengerList[currentIndex-1] = passengerList[currentIndex];
-                                        passengerList[currentIndex] = temp;
-                                        currentIndex--;
-                                        break;
-                                    } else if(innerSortPrevPassenger == innerSortCurePassenger) {
-                                        sortIndex++;
-                                    } else {
-                                        currentIndex--;
-                                        break;
-                                    }
-                                } catch (StringIndexOutOfBoundsException ex) {
-                                    currentIndex--;
-                                    break;
-                                }
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        System.out.println("=====================================================");
-        for (int i = 0; i < passengerList.length; i++) {
-            if (passengerList[i] != null) {
-                System.out.println(i + ") " + passengerList[i]);
-            }
-        }
-        System.out.println("-------------- END OF PASSENGER SORT ----------------");
-        System.out.println();
-    }
-
     public static void storeShipData(String[] ship) {
         try {
             FileWriter myWriter = new FileWriter("shipData.txt");
@@ -328,6 +267,62 @@ public class Main {
             System.out.println("Error!!! IOException " + ex );
         }
         return canRead;
+    }
+
+    public static void sortPassengerAlphabetically(String[] ship) {
+        String[] passengerList = new String[ship.length];
+        int listPosition = 0;
+        for(String passenger : ship) {
+            if(!passenger.equals("e")) {
+                passengerList[listPosition] = passenger;
+                listPosition++;
+            }
+        }
+
+        int currentWordIndex = 1;
+        int currentCharIndex = 0;
+        while (true) {
+            try {
+                if(passengerList[currentWordIndex] != null) {
+                    try {
+                        char prevPassengerChar = Character.toLowerCase(passengerList[currentWordIndex-1].charAt(currentCharIndex));
+                        char currPassengerChar = Character.toLowerCase(passengerList[currentWordIndex].charAt(currentCharIndex));
+                        if(prevPassengerChar > currPassengerChar) {
+                            String temp = passengerList[currentWordIndex - 1];
+                            passengerList[currentWordIndex - 1] = passengerList[currentWordIndex];
+                            passengerList[currentWordIndex] = temp;
+                            if(currentWordIndex > 1) {
+                                currentWordIndex--;
+                            } else {
+                                currentWordIndex++;
+                            }
+                            currentCharIndex = 0;
+                        } if (prevPassengerChar == currPassengerChar) {
+                            currentCharIndex++;
+                        } else {
+                            currentWordIndex ++;
+                            currentCharIndex = 0;
+                        }
+                    } catch (StringIndexOutOfBoundsException ex) {
+                        currentWordIndex ++;
+                        currentCharIndex = 0;
+                    }
+                } else {
+                    break;
+                }
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                break;
+            }
+        }
+
+        System.out.println("=====================================================");
+        for (int i = 0; i < passengerList.length; i++) {
+            if (passengerList[i] != null) {
+                System.out.println(i + ") " + passengerList[i]);
+            }
+        }
+        System.out.println("-------------- END OF PASSENGER SORT ----------------");
+        System.out.println();
     }
 
     private static boolean shutDown() {
