@@ -3,7 +3,6 @@ package com.wulfri;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.Scanner;
@@ -175,6 +174,64 @@ public class Main {
         System.out.println("-------------- END OF SEARCH PASSENGER --------------");
     }
 
+    public static void sortPassengerAlphabetically(String[] ship) {
+        String[] passengerList = new String[ship.length];
+        int listPosition = 0;
+        for(String passenger : ship) {
+            if(!passenger.equals("e")) {
+                passengerList[listPosition] = passenger;
+                listPosition++;
+            }
+        }
+
+        int currentWordIndex = 1;
+        int currentCharIndex = 0;
+        while (true) {
+            System.out.println("Index: " + currentWordIndex);
+            try {
+                if(passengerList[currentWordIndex] != null) {
+                    try {
+                        char prevPassengerChar = Character.toLowerCase(passengerList[currentWordIndex-1].charAt(currentCharIndex));
+                        char currPassengerChar = Character.toLowerCase(passengerList[currentWordIndex].charAt(currentCharIndex));
+                        if(prevPassengerChar > currPassengerChar) {
+                            System.out.println(prevPassengerChar + " > " + currPassengerChar);
+                            String temp = passengerList[currentWordIndex - 1];
+                            passengerList[currentWordIndex - 1] = passengerList[currentWordIndex];
+                            passengerList[currentWordIndex] = temp;
+                            if(currentWordIndex > 1) {
+                                currentWordIndex--;
+                            } else {
+                                currentWordIndex++;
+                            }
+                            currentCharIndex = 0;
+                        } else if (prevPassengerChar == currPassengerChar) {
+                            currentCharIndex++;
+                        } else {
+                            currentWordIndex ++;
+                            currentCharIndex = 0;
+                        }
+                    } catch (StringIndexOutOfBoundsException ex) {
+                        currentWordIndex ++;
+                        currentCharIndex = 0;
+                    }
+                } else {
+                    break;
+                }
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                break;
+            }
+        }
+
+        System.out.println("=====================================================");
+        for (int i = 0; i < passengerList.length; i++) {
+            if (passengerList[i] != null) {
+                System.out.println(i + ") " + passengerList[i]);
+            }
+        }
+        System.out.println("-------------- END OF PASSENGER SORT ----------------");
+        System.out.println();
+    }
+
     public static void storeShipData(String[] ship) {
         try {
             FileWriter myWriter = new FileWriter("shipData.txt");
@@ -208,8 +265,7 @@ public class Main {
                             File inputFile = new File(filePath);
                             Scanner readFile = new Scanner(inputFile);
                             String fileLine;
-                            String passengerName = "e";
-
+                            String passengerName;
                             while (readFile.hasNext()) {
                                 fileLine = readFile.nextLine();
                                 int cabinNoInt;
@@ -226,7 +282,6 @@ public class Main {
                                     ship[cabinNoInt] = "e";
                                 } else {
                                     ship[cabinNoInt] = passengerName;
-
                                 }
                             }
                             System.out.println("Ship data loaded successfully!");
@@ -267,62 +322,6 @@ public class Main {
             System.out.println("Error!!! IOException " + ex );
         }
         return canRead;
-    }
-
-    public static void sortPassengerAlphabetically(String[] ship) {
-        String[] passengerList = new String[ship.length];
-        int listPosition = 0;
-        for(String passenger : ship) {
-            if(!passenger.equals("e")) {
-                passengerList[listPosition] = passenger;
-                listPosition++;
-            }
-        }
-
-        int currentWordIndex = 1;
-        int currentCharIndex = 0;
-        while (true) {
-            try {
-                if(passengerList[currentWordIndex] != null) {
-                    try {
-                        char prevPassengerChar = Character.toLowerCase(passengerList[currentWordIndex-1].charAt(currentCharIndex));
-                        char currPassengerChar = Character.toLowerCase(passengerList[currentWordIndex].charAt(currentCharIndex));
-                        if(prevPassengerChar > currPassengerChar) {
-                            String temp = passengerList[currentWordIndex - 1];
-                            passengerList[currentWordIndex - 1] = passengerList[currentWordIndex];
-                            passengerList[currentWordIndex] = temp;
-                            if(currentWordIndex > 1) {
-                                currentWordIndex--;
-                            } else {
-                                currentWordIndex++;
-                            }
-                            currentCharIndex = 0;
-                        } if (prevPassengerChar == currPassengerChar) {
-                            currentCharIndex++;
-                        } else {
-                            currentWordIndex ++;
-                            currentCharIndex = 0;
-                        }
-                    } catch (StringIndexOutOfBoundsException ex) {
-                        currentWordIndex ++;
-                        currentCharIndex = 0;
-                    }
-                } else {
-                    break;
-                }
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                break;
-            }
-        }
-
-        System.out.println("=====================================================");
-        for (int i = 0; i < passengerList.length; i++) {
-            if (passengerList[i] != null) {
-                System.out.println(i + ") " + passengerList[i]);
-            }
-        }
-        System.out.println("-------------- END OF PASSENGER SORT ----------------");
-        System.out.println();
     }
 
     private static boolean shutDown() {
