@@ -125,9 +125,13 @@ public class Main {
         try {
             int userInputInt = Integer.parseInt(userInput);
             if(userInputInt >= 0 && userInputInt < ship.length) {
-                String deletedPassenger = ship[userInputInt];
-                ship[userInputInt] = "e";
-                System.out.println("Passenger " + deletedPassenger + " removed successfully!");
+                if(!ship[userInputInt].equals("e")) {
+                    String deletedPassenger = ship[userInputInt];
+                    ship[userInputInt] = "e";
+                    System.out.println("Passenger " + deletedPassenger + " removed successfully!");
+                } else {
+                    System.out.println("You cannot delete an empty cabin.");
+                }
             } else {
                 System.out.println("Invalid input!!! The number you entered is not belongs to a cabin.");
                 System.out.println("Exiting delete...");
