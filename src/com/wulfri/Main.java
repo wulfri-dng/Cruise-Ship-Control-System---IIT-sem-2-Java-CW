@@ -82,10 +82,11 @@ public class Main {
                 else {
                     System.out.println("Invalid input!!! Enter a number between 0 - " + (ship.length - 1));
                 }
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                System.out.println("The cabin number you've entered is invalid! Enter a number between 0 - " + (ship.length - 1));
             } catch (InputMismatchException ex) {
-                System.out.println("Invalid input!!! Enter a number between 0 - " + (ship.length - 1));
-                System.out.println("Exiting add passenger...");
-                break;
+                System.out.println("You cannot enter a string as the cabin number! Enter a number between 0 - " + (ship.length - 1));
+                scanner.nextLine();
             }
         }
     }
@@ -103,13 +104,26 @@ public class Main {
         System.out.println();
     }
 
+    public static boolean isShipFull(String[] ship) {
+        for(String passenger : ship) {
+            if(passenger.equals("e")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static void displayEmptyCabins(String[] ship) {
         System.out.println("=====================================================");
-        System.out.print("Empty cabin numbers: ");
-        for(int i = 0; i < ship.length; i++) {
-            if(ship[i].equals("e")) {
-                System.out.print(i + " ");
+        if(!isShipFull(ship)) {
+            System.out.print("Empty cabin numbers: ");
+            for(int i = 0; i < ship.length; i++) {
+                if(ship[i].equals("e")) {
+                    System.out.print(i + " ");
+                }
             }
+        } else {
+            System.out.println("No empty cabins were found. The ship is full.");
         }
         System.out.println();
         System.out.println("---------------- END OF EMPTY CABINS -----------------");
